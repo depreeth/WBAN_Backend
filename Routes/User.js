@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
-
+const crypto = require('crypto');
 const router = express.Router()
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser').json();
@@ -48,11 +48,20 @@ router.post('/login',bodyParser,(req,res)=>{
         })
     }
 })
+function generatePrivateKey() {
+    const privateKeyBuffer = crypto.randomBytes(32);
+
+  // Convert the buffer to a hexadecimal string
+  const privateKey = privateKeyBuffer.toString('hex');
+
+  return privateKey;
+  }
 
 router.post('/signup',bodyParser,(req,res)=>{
     // res.send({msg:"signup done"})
     // let {name,email,password} = req.body;
     let {name,email,password} = req.body;
+    
     
     if(name == "" || email == "" || password == ""){
         res.json({
@@ -70,13 +79,14 @@ router.post('/signup',bodyParser,(req,res)=>{
                 })
             }
             else{
-            
+                const privateKey = generatePrivateKey();
                 const saltRounds = 10;
                 bcrypt.hash(password,saltRounds).then(hashedpass=>{
                     const newUser = new User({
                         name: name,
                         email: email,
-                        password: hashedpass
+                        password: hashedpass,
+                        privateKey
                     })
                     newUser.save().then(result=>{
                         res.json({

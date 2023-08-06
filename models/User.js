@@ -26,7 +26,7 @@ const UserSchema = new Schema({
         trim: true,
         // minLength: 6,
     },
-    publickey:{
+    privateKey:{
         type: String,
         required: true,
         trim: true,
