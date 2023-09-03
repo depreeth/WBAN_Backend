@@ -9,7 +9,7 @@ const bodyParser = require("body-parser").json();
 router.post("/detection", bodyParser, async (req, res) => {
   const data = req.body;
   // console.log(Object.keys(data).length)
-  // console.log("hii")
+  console.log("hii")
   const len = Object.keys(data).length;
   const user = await User.findOne({ _id: data.userId });
   const TAvalues = await TA.findOne({ parameter: data.parameter });
@@ -28,6 +28,7 @@ router.post("/detection", bodyParser, async (req, res) => {
     // res.status(200).send({"inp":encInpVal.toString(), "ta":encTaVal.toString()})
     const negInp = publicKey.multiply(encInpVal, -1);
     diff = publicKey.addition(encTaVal, negInp);
+    res.send({diff:diff.toString()})
     // return res.send({ diff: diff.toString() });
     // } else {
     //   for (let i = 2; i < Object.keys(data).length; i++) {}
@@ -79,10 +80,38 @@ router.post("/msp/search", bodyParser, async (req, res) => {
       // console.log(diff);
     });
 
+    let ref = []
+    for(let i = 0; i<=20; i++){
+      let val = publicKey.encrypt(i)
+      ref.push(val.toString())
+    }
+
     res.send(diff);
   } catch (error) {
     res.send(error);
   }
 });
+
+
+
+// const test = async(a)=>{
+//   const n = BigInt(12541451810502504779)
+//   const g = BigInt(31144221984188367903891686897978197802)
+//   const lambda = BigInt(6270725901478407492)
+//   const mu = BigInt(5563088329959035257)
+//   const _p = BigInt(5073962423)
+//   const _q = BigInt(2471727373)
+//   const pub = new paillier.PublicKey(n, g)
+//   // console.log(pub)
+//   const pvt = new paillier.PrivateKey(lambda, mu, pub, _p, _q)
+//   // console.log(pvt)
+
+//   // let u = pub.encrypt(a)
+
+//   let v = pvt.decrypt(a)
+//   // console.log(u)
+//   console.log(v)
+// }
+// test(3096082819769093573)
 
 module.exports = router;
