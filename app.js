@@ -2,12 +2,15 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
+var cors = require('cors')
+
 
 const userRoutes = require('./Routes/User')
 const TARoutes = require('./Routes/TAentry')
 const homoRoutes = require('./Routes/Homo')
 const mspRoutes = require('./Routes/MSP')
 
+app.use(cors())
 app.use('/api/user',userRoutes)
 app.use('/api/TA',TARoutes)
 app.use('/api/homo',homoRoutes)
