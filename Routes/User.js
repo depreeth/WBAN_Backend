@@ -1,8 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
-// const crypto = require('crypto');
-const paillier = require("paillier-bigint");
 const router = express.Router()
+const paillier = require("paillier-bigint");
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser').json();
 
@@ -49,23 +48,16 @@ router.post('/login',bodyParser,(req,res)=>{
         })
     }
 })
-// function generatePrivateKey() {
-//     const privateKeyBuffer = crypto.randomBytes(32);
 
-//   // Convert the buffer to a hexadecimal string
-//   const privateKey = privateKeyBuffer.toString('hex');
-
-//   return privateKey;
-//   }
 
 router.post('/signup',bodyParser, async(req,res)=>{
     // res.send({msg:"signup done"})
     // let {name,email,password} = req.body;
     let {name,email,password} = req.body;
-    const { pub, pvt } = await paillier.generateRandomKeys(32);
+    const { publicKey, privateKey } = await paillier.generateRandomKeys(64);
 
-    
-    
+    console.log("pub: ", publicKey)
+
     if(name == "" || email == "" || password == ""){
         res.json({
             status:"FAILURE",
@@ -82,7 +74,6 @@ router.post('/signup',bodyParser, async(req,res)=>{
                 })
             }
             else{
-                // const privateKey = generatePrivateKey();
                 const saltRounds = 10;
                 bcrypt.hash(password,saltRounds).then(hashedpass=>{
                     const newUser = new User({
@@ -90,9 +81,9 @@ router.post('/signup',bodyParser, async(req,res)=>{
                         email: email,
                         password: hashedpass,
                         publicKey: {
-                            n:pub.n,
-                            _n2: pub,_n2,
-                            g:pub.g
+                            n:publicKey.n,
+                            _n2: publicKey._n2,
+                            g:publicKey.g
                         }
                     })
                     newUser.save()
@@ -101,7 +92,12 @@ router.post('/signup',bodyParser, async(req,res)=>{
                             status:"Successfull",
                             message:"New User Created",
                             data:result,
-                            privateKey:pvt
+                            privateKey:{
+                                lambda: privateKey.lambda.toString(),
+                                mu: privateKey.mu.toString(),
+                                _p: privateKey._p.toString(),
+                                _q: privateKey._q.toString()
+                            }
                         })
                     })
                 }).catch(err=>{

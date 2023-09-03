@@ -4,8 +4,14 @@ const mongoose = require('mongoose')
 const app = express()
 
 const userRoutes = require('./Routes/User')
+const TARoutes = require('./Routes/TAentry')
+const homoRoutes = require('./Routes/Homo')
+const mspRoutes = require('./Routes/MSP')
 
 app.use('/api/user',userRoutes)
+app.use('/api/TA',TARoutes)
+app.use('/api/homo',homoRoutes)
+app.use('/api/msp',mspRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
