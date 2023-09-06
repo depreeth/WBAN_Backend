@@ -27,15 +27,7 @@ const UserSchema = new Schema({
     // minLength: 6,
   },
   publicKey: {
-    n: {
-      type: String,
-    },
-    _n2: {
-      type: String,
-    },
-    g: {
-      type: String,
-    },
+    type:String
   },
 });
 

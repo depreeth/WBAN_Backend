@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 // import img from "../assets/signup-bg.jpg";
 import { useNavigate } from "react-router-dom";
+import paillier from "paillier-bigint"
 import {AiFillEyeInvisible,AiFillEye} from 'react-icons/ai'
 
 const InputForm = () => {
   const [id, setId] = useState("");
   const [parameter, setParameter] = useState("");
   const [value, setValue] = useState("");
+  const [diff, setDiff] = useState("");
  
+  const x = BigInt(746)
 
   const navigate = useNavigate ();
 
@@ -28,11 +31,31 @@ const InputForm = () => {
         'Content-Type': 'application/json'
       }
     })
-      .then(response => console.log(response.body.getReader().read()))
-      .then(data => {
-console.log("data:",data)
+      .then((prom)=>{
+        prom.json()
+        .then((j)=>{
+          // console.log(j)
+          setDiff(j)
+        })
+        .catch((e)=>{
+          console.log("ee",e)
+        })
       })
       .catch(error => console.error(error));
+
+
+      const pvt = "eyJsYW1iZGEiOiI1OTIyMDU5ODA3OTkxNjg1MTQ4IiwibXUiOiIxMjY1NDI2MDA3OTgyODQ5NjQiLCJfcCI6IjUxNjUyNDkzOTkiLCJfcSI6IjIyOTMwMzkyNTMiLCJwdWJsaWNLZXkiOnsibiI6IjExODQ0MTE5NjIzNDQxNjU4OTQ3IiwiX24yIjoiMTQwMjgzMTY5NjU0Mzk1Nzg0OTMwODY3NDk2NTg3NDY1MTQ4ODA5IiwiZyI6IjgzMzk5MTQ4MTUwNTgwMzQxNDQzODgzMzk0MjUxMjA3NjEyNzY5In19"
+
+      // const pubStr = atob(pub)
+      // const pubJSON = JSON.parse(pubStr)
+      // const publicKey = new paillier.PublicKey(BigInt(pubJSON.n), BigInt(pubJSON.g))
+
+      // const pvtStr = atob(pvt)
+      // const pvtJSON = JSON.parse(pvtStr)
+      // const publicKey = new paillier.PublicKey(BigInt(pvtJSON.publicKey.n), BigInt(pvtJSON.publicKey.g))
+      
+      // const privateKey = new paillier.PrivateKey(BigInt(pvtJSON.lambda),BigInt(pvtJSON.mu),publicKey, BigInt(pvtJSON._p), BigInt(pvtJSON._q))
+      // console.log("pvt",privateKey)
 
   }
 

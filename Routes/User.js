@@ -54,9 +54,25 @@ router.post('/signup',bodyParser, async(req,res)=>{
     // res.send({msg:"signup done"})
     // let {name,email,password} = req.body;
     let {name,email,password} = req.body;
-    const { publicKey, privateKey } = await paillier.generateRandomKeys(64);
+    let { publicKey, privateKey } = await paillier.generateRandomKeys(64);
 
-    console.log("pub: ", publicKey)
+    // const a = publicKey.encrypt(32)
+
+    publicKey.n = publicKey.n.toString()
+    publicKey._n2 = publicKey._n2.toString()
+    publicKey.g = publicKey.g.toString()
+    const pubJSON = JSON.stringify(publicKey)
+    const pubBase64 = btoa(pubJSON)
+    // console.log("pub ", pubBase64)
+    
+    privateKey.lambda = privateKey.lambda.toString()
+    privateKey.mu = privateKey.mu.toString()
+    privateKey._p = privateKey._p.toString()
+    privateKey._q = privateKey._q.toString()
+    const pvtJSON = JSON.stringify(privateKey)
+    const pvtBase64 = btoa(pvtJSON)
+    // console.log("pvt ", pvtBase64)
+    // console.log("dec ", privateKey.decrypt(a))
 
     if(name == "" || email == "" || password == ""){
         res.json({
@@ -80,11 +96,7 @@ router.post('/signup',bodyParser, async(req,res)=>{
                         name: name,
                         email: email,
                         password: hashedpass,
-                        publicKey: {
-                            n:publicKey.n,
-                            _n2: publicKey._n2,
-                            g:publicKey.g
-                        }
+                        publicKey: pubBase64
                     })
                     newUser.save()
                     .then(result=>{
@@ -92,12 +104,7 @@ router.post('/signup',bodyParser, async(req,res)=>{
                             status:"Successfull",
                             message:"New User Created",
                             data:result,
-                            privateKey:{
-                                lambda: privateKey.lambda.toString(),
-                                mu: privateKey.mu.toString(),
-                                _p: privateKey._p.toString(),
-                                _q: privateKey._q.toString()
-                            }
+                            privateKey:pvtBase64
                         })
                     })
                 }).catch(err=>{
